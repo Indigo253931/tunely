@@ -32,11 +32,40 @@ sampleAlbums.push({
              releaseDate: '2008, September 12',
              genres: [ 'piano' ]
            });
+
+var sampleSongs = [];
+
+sampleSongs.push({ name: 'Famous',
+                   trackNumber: 1
+});
+sampleSongs.push({ name: "All of the Lights",
+                   trackNumber: 2
+});
+sampleSongs.push({ name: 'Guilt Trip',
+                   trackNumber: 3
+});
+sampleSongs.push({ name: 'Paranoid',
+                   trackNumber: 4
+});
+sampleSongs.push({ name: 'Ultralight Beam',
+                   trackNumber: 5
+});
+sampleSongs.push({ name: 'Runaway',
+                   trackNumber: 6
+});
+sampleSongs.push({ name: 'Stronger',
+                   trackNumber: 7
+});
+
+
 /* end of hard-coded data */
 
  $(document).ready(function() {
-  console.log('app.js loaded!');
-});
+    var formdata = $(this).seralize();
+    $(this).trigger("reset");
+         console.log('app.js loaded!'); //use the console for debugging, F12 in Chrome, not alerts
+    });
+
 
 $.get('/api/albums', function(albums){
 for (var i = 0; i < albums.length; i++) {
@@ -51,6 +80,7 @@ for (var i = 0; i < albums.length; i++) {
 console.log(albums[i]);
 renderAlbum(albums[i]);
 }
+});
 
 
 

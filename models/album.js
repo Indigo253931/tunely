@@ -8,7 +8,11 @@ var albumSchema = new Schema({
 	name: "String",
 	releaseDate: "String",
 	genres: "String",
-	songs: [Song.Schema]
+	songs: [Song.schema]
+});
+
+var songSchema = new Schema({
+
 });
 
 

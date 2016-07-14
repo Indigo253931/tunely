@@ -38,6 +38,16 @@ var albumsList =[
 
 ];
 
+db.Album.create(sampleSongs, function(err, Songs){
+   if (err){     
+    return console.log("Error:", err);
+      } else {
+        console.log("Created" + song);
+
+}
+});
+
+
 
 db.Album.remove({}, function(err, albums){
 
@@ -49,3 +59,6 @@ db.Album.remove({}, function(err, albums){
   });
 
 });
+
+
+   //process.exit(); // we're all done! Exit the program})

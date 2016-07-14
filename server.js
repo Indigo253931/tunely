@@ -16,6 +16,8 @@ app.use(express.static(__dirname + '/public'));
  ************/
 
 
+var genre_array = req.body.genre;
+
 
 
 /**********
@@ -55,13 +57,16 @@ res.json(albums);
 });
 });
 
-app.post('/api/albums', function album_index(req, res){
-models.Album.create({}, function(err, albums){
-console.log(albums);
-res.json(albums);
+app.post('/api/albums', function (req, res){
+var newAlbum = req.body;
+db.Album.create(newAlbum, function(err, albums){
+  console.log('create album', req.body);
+  res.json(albums);
 
 });
 });
+
+
 /**********
  * SERVER *
  **********/
