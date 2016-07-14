@@ -3,10 +3,10 @@
 
 var db = require("./models");
 
-var albumsList =[
+var albumsList =[];
   // put data here!
 /* hard-coded data */
-			{
+			albumsList.push({
              
               artistName: 'the Old Kanye',
               name: 'The College Dropout',
@@ -33,10 +33,47 @@ var albumsList =[
               name: '808s & Heartbreak',
               releaseDate: '2008, November 24',
               genres: [ 'r&b', 'electropop', 'synthpop' ]
-            }
+            });
 
 
-];
+var sampleSongs = [];
+
+sampleSongs.push({ name: 'Famous',
+                   trackNumber: 1
+});
+sampleSongs.push({ name: "All of the Lights",
+                   trackNumber: 2
+});
+sampleSongs.push({ name: 'Guilt Trip',
+                   trackNumber: 3
+});
+sampleSongs.push({ name: 'Paranoid',
+                   trackNumber: 4
+});
+sampleSongs.push({ name: 'Ultralight Beam',
+                   trackNumber: 5
+});
+sampleSongs.push({ name: 'Runaway',
+                   trackNumber: 6
+});
+sampleSongs.push({ name: 'Stronger',
+                   trackNumber: 7
+});
+
+//populate
+albumList.forEach(function(album) {
+   album.songs = sampleSongs;
+ });
+
+
+db.Album.remove({}, function(err, albums){
+
+  db.Album.create(albumList, function(err, albums){
+    if (err) { return console.log('ERROR', err); }
+    console.log("all albums:", albums);
+    console.log("created", albums.length, "albums");
+    process.exit();
+  });
 
 db.Album.create(sampleSongs, function(err, Songs){
    if (err){     
@@ -48,15 +85,6 @@ db.Album.create(sampleSongs, function(err, Songs){
 });
 
 
-
-db.Album.remove({}, function(err, albums){
-
-  db.Album.create(albumsList, function(err, albums){
-    if (err) { return console.log('ERROR', err); }
-    console.log("all albums:", albums);
-    console.log("created", albums.length, "albums");
-    process.exit();
-  });
 
 });
 

@@ -2,20 +2,24 @@
 
 //require express in our app
 var express = require('express');
-var models = require('./models');
 // generate a new express app and call it 'app'
 var app = express();
+var mongoose = require("mongoose");
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
 
+mongoose.connect("mongodb://localhost/tunely_test");
+
+var Album = require('./album');
+var Song = require('./song');
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 /************
  * DATABASE *
  ************/
-
-
+var models = require('./models');
+var db = require('./models');
 var genre_array = req.body.genre;
 
 
@@ -50,22 +54,29 @@ app.get('/api', function api_index (req, res){
   });
 });
 
-app.get('/api/albums', function album_index(req, res){
-models.Album.find({}, function(err, albums){
+app.get('/api/albums', function albumsIndex(req, res){
+db.Album.find({}, function(err, albums){
 res.json(albums);
-
 });
 });
 
-app.post('/api/albums', function (req, res){
-var newAlbum = req.body;
-db.Album.create(newAlbum, function(err, albums){
-  console.log('create album', req.body);
-  res.json(albums);
+app.post('/api/albums', function albumCreate(req, res){
+ console.log('body', req.body);
 
+var genres = req.body.genres.split(',').map(function(item){
+  return item.trim();});
+req.body.genres = genres;
+
+
+  db.Album.create(req.body, function(err, album) {
+    if (err) { console.log('error', err); }
+    console.log(album);
+    res.json(album);
 });
 });
 
+module.exports.Album = Album;
+module.exports.Song = Song;
 
 /**********
  * SERVER *

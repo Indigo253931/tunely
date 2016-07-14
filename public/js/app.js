@@ -2,7 +2,8 @@
  *
  * You may edit this file as you see fit.  Try to separate different components
  * into functions and objects as needed.
- *
+ *  
+
  */
 
 
@@ -66,6 +67,14 @@ sampleSongs.push({ name: 'Stronger',
          console.log('app.js loaded!'); //use the console for debugging, F12 in Chrome, not alerts
     });
 
+ $('#albums').on('click', '.add-song', function(e) {
+    console.log('asdfasdfasdf');
+    var id= $(this).parents('.album').data('album-id'); // "5665ff1678209c64e51b4e7b"
+    console.log('id',id);
+});
+
+ $('#songModal').data('album-id', currentAlbumId);
+
 
 $.get('/api/albums', function(albums){
 for (var i = 0; i < albums.length; i++) {
@@ -83,6 +92,10 @@ renderAlbum(albums[i]);
 });
 
 
+function handleNewSongSubmit(){
+  
+}
+
 
 // this function takes a single album and renders it to the page
 function renderAlbum(album) {
@@ -90,7 +103,7 @@ function renderAlbum(album) {
 
   var albumHtml =
   "        <!-- one album -->" +
-  "        <div class='row album' data-album-id='" + "HARDCODED ALBUM ID" + "'>" +
+  "        <div class='row album' data-album-id='album._id'" + "HARDCODED ALBUM ID" + "'>" +
   "          <div class='col-md-10 col-md-offset-1'>" +
   "            <div class='panel panel-default'>" +
   "              <div class='panel-body'>" +
@@ -121,13 +134,24 @@ function renderAlbum(album) {
   "              </div>" + // end of panel-body
 
   "              <div class='panel-footer'>" +
-  "              </div>" +
+  "              <button class='btn btn-primary add-song'>Add Song</button></div>" +
 
   "            </div>" +
   "          </div>" +
   "          <!-- end one album -->";
 
-
+function buildSongsHtml(songs) {
+  var songText = "  &ndash; ";
+  songs.forEach(function(song) {
+     songText = songText + "(" + song.trackNumber + ") " + song.name + " &ndash; ";
+  });
+  var songsHtml  =
+  "                      <li class='list-group-item'>" +
+  "                        <h4 class='inline-header'>Songs:</h4>" +
+  "                         <span>" + songText + "</span>" +
+  "                      </li>";
+  return songsHtml;
+}
 
   // render to the page with jQuery
   $("#albums").append(albumHtml);
