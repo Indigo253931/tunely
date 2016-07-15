@@ -2,28 +2,18 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var sampleSongsSchema = new Schema({
+var SongSchema = new Schema({
 	
 	name: {
 		type: String
 	},
-	artist: {
-		type: String
-	},
-	album: {
-		type: String
-	
-	},
-	genre: {
-		type: String
-	},
-	year: {
-		type: String
+	trackNumber: {
+		type: Number
 	}
 });
 
 
-var sampleSongs = mongoose.model("Songs", sampleSongsSchema);
+var Song = mongoose.model("Song", SongSchema);
 
 
-module.exports = sampleSongs;
+module.exports = Song;

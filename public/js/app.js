@@ -3,10 +3,7 @@
  * You may edit this file as you see fit.  Try to separate different components
  * into functions and objects as needed.
  *  
-
  */
-
-
 /* hard-coded data! */
 var sampleAlbums = [];
 sampleAlbums.push({
@@ -34,76 +31,113 @@ sampleAlbums.push({
              genres: [ 'piano' ]
            });
 
-var sampleSongs = [];
-
-sampleSongs.push({ name: 'Famous',
-                   trackNumber: 1
-});
-sampleSongs.push({ name: "All of the Lights",
-                   trackNumber: 2
-});
-sampleSongs.push({ name: 'Guilt Trip',
-                   trackNumber: 3
-});
-sampleSongs.push({ name: 'Paranoid',
-                   trackNumber: 4
-});
-sampleSongs.push({ name: 'Ultralight Beam',
-                   trackNumber: 5
-});
-sampleSongs.push({ name: 'Runaway',
-                   trackNumber: 6
-});
-sampleSongs.push({ name: 'Stronger',
-                   trackNumber: 7
-});
-
 
 /* end of hard-coded data */
 
  $(document).ready(function() {
-    var formdata = $(this).seralize();
-    $(this).trigger("reset");
-         console.log('app.js loaded!'); //use the console for debugging, F12 in Chrome, not alerts
+    console.log('app.js loaded!');
+    $.get("/api/albums", function(response){
+      response.forEach(renderAlbum);
     });
 
- $('#albums').on('click', '.add-song', function(e) {
-    console.log('asdfasdfasdf');
-    var id= $(this).parents('.album').data('album-id'); // "5665ff1678209c64e51b4e7b"
-    console.log('id',id);
+$("form").submit(function(){
+ var formdata = $(this).seralize();
+ console.log(formdata);
+$.post('/api/albums', formdata, function(response){
+renderAlbum(response);
+console.log(response);
+});   
+   
+$(this).trigger("reset");
+        event.preventDefault();
+      });
+
+  $('#albums').on('click', '.add-song', function(e){
+      console.log('add song');
+      var id= $(this).parents('.album').data('album-id'); // "5665ff1678209c64e51b4e7b"
+      console.log('id',id);
+  $('#songModal').data('album-id', id);
+  $('#songModal').modal();
 });
 
- $('#songModal').data('album-id', currentAlbumId);
+  $('#saveSong').on('click', handleNewSongSubmit);
 
 
-$.get('/api/albums', function(albums){
-for (var i = 0; i < albums.length; i++) {
-console.log(albums[i]);
-renderAlbum(albums[i]);
-}
-});
-
-$.post('/api/albums', sampleAlbums, function(albums){
-console.log(albums);
-for (var i = 0; i < albums.length; i++) {
-console.log(albums[i]);
-renderAlbum(albums[i]);
-}
-});
-
+$('#saveSong').on('click', handleNewSongSubmit);
+$('#albums').on('click', '.delete-album', handleDeleteAlbumClick);
+  });
 
 function handleNewSongSubmit(){
-  
+  var albumId = $('#songModal').data('album-id');
+  var songName = $('songName').val();
+  var trackNumber = $('#trackNumber').val();
+
+  var formData = {
+  name: songName,
+ trackNumber: trackNumber
+  };
+
+  var postUrl = '/api/albums/' + albumId + '/song';
+  console.log('posting to ', postUrl, 'with data', formData);
+
+$.post(postUrl, formData)
+.success(function(song){
+  console.log('song', song);
+
+
+      // re-get full album and render on page
+      $.get('/api/albums/' + albumId).success(function(album) {
+        //remove old entry
+        $('[data-album-id='+ albumId + ']').remove();
+        // render a replacement
+        renderAlbum(album);
+      });
+
+      //clear form
+      $('#songName').val('');
+      $('#trackNumber').val('');
+      $('#songModal').modal('hide');
+
+    });
 }
 
 
+function handleDeleteAlbumClick() {
+  var albumId = $(this).parents('.album').data('album-id');
+  console.log('delete album id=' + albumId );
+  $.ajax({
+    method: 'DELETE',
+    url: ('/api/albums/' + albumId),
+    success: function() {
+      console.log("delete ajax call working");
+      $('[data-album-id='+ albumId + ']').remove();
+    }
+  });
+}
+
+function buildSongsHtml(songs) {
+  var songText = "  &ndash; ";
+  songs.forEach(function(song) {
+     songText = songText + "(" + song.trackNumber + ") " + song.name + " &ndash; ";
+  });
+
+  var songsHtml  =
+  "                      <li class='list-group-item'>" +
+  "                        <h4 class='inline-header'>Songs:</h4>" +
+  "                         <span>" + songText + "</span>" +
+  "                      </li>";
+  return songsHtml;
+}
+
 // this function takes a single album and renders it to the page
-function renderAlbum(album) {
+
+  function renderAlbum(album) {
   console.log('rendering album:', album);
+
 
   var albumHtml =
   "        <!-- one album -->" +
-  "        <div class='row album' data-album-id='album._id'" + "HARDCODED ALBUM ID" + "'>" +
+  "        <div class='row album' data-album-id='" + album._id + "''>" +
   "          <div class='col-md-10 col-md-offset-1'>" +
   "            <div class='panel panel-default'>" +
   "              <div class='panel-body'>" +
@@ -126,34 +160,19 @@ function renderAlbum(album) {
   "                        <h4 class='inline-header'>Released date:</h4>" +
   "                        <span class='album-releaseDate'>" + album.releaseDate + "</span>" +
   "                      </li>" +
+                          buildSongsHtml(album.songs) +
   "                    </ul>" +
   "                  </div>" +
   "                </div>" +
   "                <!-- end of album internal row -->" +
-
   "              </div>" + // end of panel-body
-
   "              <div class='panel-footer'>" +
   "              <button class='btn btn-primary add-song'>Add Song</button></div>" +
-
   "            </div>" +
   "          </div>" +
   "          <!-- end one album -->";
 
-function buildSongsHtml(songs) {
-  var songText = "  &ndash; ";
-  songs.forEach(function(song) {
-     songText = songText + "(" + song.trackNumber + ") " + song.name + " &ndash; ";
-  });
-  var songsHtml  =
-  "                      <li class='list-group-item'>" +
-  "                        <h4 class='inline-header'>Songs:</h4>" +
-  "                         <span>" + songText + "</span>" +
-  "                      </li>";
-  return songsHtml;
-}
 
   // render to the page with jQuery
   $("#albums").append(albumHtml);
-
 }
