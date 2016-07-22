@@ -58,7 +58,7 @@ res.json(album);
 
 app.post('/api/albums/:albumId/songs', function create(req, res){
   console.log('body', req.body);
-  db.Album.findOne({_id: req.params/albumId}, function(err, album){
+  db.Album.findOne({_id: req.params.albumId}, function(err, album){
      if (err) { console.log('error', err); }
 var song = new db.Song(req.body);
 album.songs.push(song);

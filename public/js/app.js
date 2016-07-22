@@ -47,7 +47,7 @@ $(this).trigger("reset");
  trackNumber: trackNumber
   };
 
-  var postUrl = '/api/albums/' + albumId + '/song';
+  var postUrl = '/api/albums/' + albumId + '/songs';
   console.log('posting to ', postUrl, 'with data', formData);
 
 
